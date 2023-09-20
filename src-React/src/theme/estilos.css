@@ -1,0 +1,11 @@
+.BarraLateral_barra {
+
+  height: 100vh;
+  background: rgb(18, 190, 244, .3);
+  padding: 1vw;
+}
+
+.FromularioAlta_general {
+  height: 100%;
+  font-size: smaller;
+}
