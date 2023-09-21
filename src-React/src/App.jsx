@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import "bootstrap";
 import BarraLateral from './components/BarraLateral';
 import "./theme/estilos.css";
 import FromularioAlta from './components/FromularioAlta';

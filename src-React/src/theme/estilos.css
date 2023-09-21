@@ -9,3 +9,12 @@
   height: 100%;
   font-size: smaller;
 }
+
+#imagen_guia_fotografia {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 300px;
+  max-height: 300px;
+}

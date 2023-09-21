@@ -1,12 +1,13 @@
 import { useState } from 'react';
+import "bootstrap";
+import { Modal } from 'bootstrap';
+import { useEffect, useRef } from 'react';
+import Fotografia from './Fotografia';
+//import { Modal } from 'bootstrap';
 /*
 Componente: Formulario Alta
-Props: cambioPantalla(pantalla) función encargada de modificar el state del padre
 Descripción: Componente encargado de Capturar y dar de Alta los datos del Usuario
 */
-
-//Declaración Variables Globales Sincronas
-var anteriorActivo = "barra_Altas"; //variable para saber cual es el ultimo botóin seleccionado
 
 export default function FromularioAlta() {
     //Declaración de States
@@ -21,14 +22,23 @@ export default function FromularioAlta() {
     const [del_mun, setDel_mun] = useState('');
     const [estado, setEstado] = useState('');
     const [cp, setCP] = useState('');
-    //Declaración de expresiones regulares
-    const ReExpNombresNegado = "([^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ])+";
-    const ReExpNombres = "([a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ])+";
+    const [camara, setCamara] = useState(false);
+    //variables de Ref
+    const modalSelfie = useRef(false);
+    //Declaración de expresiones regulares para verificaciones
+    const ReExpNombresNegado = "([^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ])+"; //Para eliminar Datos
+    const ReExpNombres = "([a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ])+"; //En caso de que Falles se verifican directamente los datos en el Form
     const ReExpCallesNegado = "([^a-zA-z0-9áéíóúÁÉÍÓÚüÜñÑ ])+";
     const ReExpCalles = "([a-zA-z0-9áéíóúÁÉÍÓÚüÜñÑ ])+";
     const ReExpNumerosNegado = "([^0-9])+";
     const ReExpNumeros = "([0-9])+";
     const ReExpEmail = "(^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$)";
+    //Dar de alta los Modales equivalente Component Did mount
+    useEffect(() => {
+        modalSelfie.current = new Modal(document.getElementById('FotpgrafiaModal'));
+    },
+        []);
+
     //Funciónes encargadas de almacenar y verificar las entradas
     function manejadorNombre(e) {
         let reg = new RegExp(ReExpNombresNegado);
@@ -82,7 +92,6 @@ export default function FromularioAlta() {
     return (
         <div className='FromularioAlta_general col-8'>
             <div className='container'>
-
                 <form className='needs-validation'>
                     <label className="form-label" htmlFor="nombre">Nombre: </label>
                     <div className="input-group input-group-sm mb-3">
@@ -120,9 +129,35 @@ export default function FromularioAlta() {
                         <span className="input-group-text">CP</span>
                         <input onChange={manejadorCP} value={cp} type="number" className="form-control" placeholder="CP" pattern={ReExpNumeros} required />
                     </div>
+                    <button className='btn btn-primary m-2' type='button' onClick={() => { modalSelfie.current.show(); setCamara(true); }}> Tomar Selfie</button>
                     <button className="btn btn-primary" type="submit">Dar de Alta</button>
                 </form>
             </div>
+            {/*<!-- Modal Fotografía -->*/}
+            <div className="modal fade" id="FotpgrafiaModal" tabIndex="-1" role="dialog" aria-labelledby="FotpgrafiaModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content justify-content-center">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="FotpgrafiaModalLabel">Selfie</h5>
+                            <button type="button" className="close" data-bs-dismiss="modal" aria-label="Close" onClick={() => { setCamara(false); }}>
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            {camara ?
+                                <Fotografia />
+                                :
+                                <label>Cargando</label>
+                            }
+                        </div>
+                        <div className="modal-footer">
+                            <button onClick={() => { setCamara(false); }} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     );
 }
