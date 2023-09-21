@@ -9,7 +9,9 @@ Descripción: Este componete muestra el los datos de los usuarios registrados
 */
 
 export default function VisualizarDatos() {
-    const [busqueda, setBusqueda] = useState("");
+    const [busquedaNombre, setBusquedaNombre] = useState("");
+    const [busquedaPaterno, setBusquedaPaterno] = useState("");
+    const [busquedaMaterno, setBusquedaMaterno] = useState("");
     const [informacion, setinformacion] = useState([]);
     const [total, setTotal] = useState([]);
     const [pagina, setPagina] = useState(0);
@@ -17,11 +19,14 @@ export default function VisualizarDatos() {
 
     const pagina_contador = useRef(0);
     const modalDetalles = useRef(false);
-    //Hacemos la Petición de Usuarios inicial
+
+    const limite = 10;
+
+    //Hacemos la Petición de Usuarios inicial y las atualizaciones con las busquedas
     useEffect(() => {
-        let limite = 10;
-        let offset = pagina * 10;
-        let url = "https://api.devdicio.net:8444/v1/sec_dev_interview/?limit=" + limite + "&offset=" + offset + "";
+        console.log("activado")
+        let offset = pagina * limite;
+        let url = "https://api.devdicio.net:8444/v1/sec_dev_interview/?where=(nombre%2Clike%2C%25" + busquedaNombre.trim() + "%25)~and(apellidoPaterno%2Clike%2C%25" + busquedaPaterno.trim() + "%25)~and(apellidoMaterno%2Clike%2C%25" + busquedaMaterno.trim() + "%25)&limit=" + limite + "&offset=" + offset + "";
         axios({
             url: url,
             method: "GET",
@@ -51,7 +56,7 @@ export default function VisualizarDatos() {
             alert("Error de Conexión");
         });
     },
-        [pagina]);
+        [busquedaNombre, busquedaPaterno, busquedaMaterno, pagina]);
     useEffect(() => {
         //Solicitamos el número total de entradas en el servidor
         const url = 'https://api.devdicio.net:8444/v1/sec_dev_interview/count';
@@ -89,13 +94,15 @@ export default function VisualizarDatos() {
         modalDetalles.current = new Modal(document.getElementById('DetallesModal'));
     },
         []);
+    //Abrimos los detalles de un usuario
     function abrirModalDetalles(info) {
+        console.log(info);
         setDetallesActuales(info);
         modalDetalles.current.show();
     }
     //Funciones de Paginación
     function siguinetePagina() {
-        if (pagina_contador.current < parseInt(total / 10))
+        if (pagina_contador.current < parseInt(total / limite) - 1)
             pagina_contador.current = pagina_contador.current + 1;
         setPagina(pagina_contador.current);
     }
@@ -104,13 +111,23 @@ export default function VisualizarDatos() {
             pagina_contador.current = pagina_contador.current - 1;
         setPagina(pagina_contador.current);
     }
+    //Manejadores de Cambios en inputs
+    function manejadorBusquedaNombre(e) {
+        setBusquedaNombre(e.target.value);
+    }
+    function manejadorBusquedaPaterno(e) {
+        setBusquedaPaterno(e.target.value);
+    }
+    function manejadorBusquedaMaterno(e) {
+        setBusquedaMaterno(e.target.value);
+    }
     //Renderizado Tabla con los datos obtenidos
     let datos_tabla = [];
     for (let i = 0; i < informacion.length; i++) {
         const element = informacion[i];
         datos_tabla.push(
             <tr key={"datos_" + element.id}>
-                <th scope="row">{i + 1 + (pagina * 10)}</th>
+                <th scope="row">{i + 1 + (pagina * limite)}</th>
                 <td>{element.nombre}</td>
                 <td>{element.apellidoPaterno}</td>
                 <td>{element.apellidoMaterno}</td>
@@ -124,6 +141,14 @@ export default function VisualizarDatos() {
     return (
         <div className='container col-9'>
             <label>Lista de Usuarios</label>
+            <div className="input-group input-group-sm mb-3">
+                <div className="input-group-prepend">
+                    <span className="input-group-text" id="basic-addon1">Buscar</span>
+                </div>
+                <input value={busquedaNombre} onChange={manejadorBusquedaNombre} type="text" className="form-control" placeholder="Nombre" />
+                <input value={busquedaPaterno} onChange={manejadorBusquedaPaterno} type="text" className="form-control" placeholder="Paterno" />
+                <input value={busquedaMaterno} onChange={manejadorBusquedaMaterno} type="text" className="form-control" placeholder="Materno" />
+            </div>
             <div className="table-responsive">
 
                 <table className="table table-sm">
@@ -163,6 +188,7 @@ export default function VisualizarDatos() {
                         </div>
                         <div className="modal-body">
                             {
+
                                 detallesActuales ?
                                     <div className="list-group">
                                         <a href="#" className="list-group-item list-group-item-action" >
@@ -172,10 +198,53 @@ export default function VisualizarDatos() {
                                         <a href="#" className="list-group-item list-group-item-action">Estado: {detallesActuales.estado}</a>
                                         <a href="#" className="list-group-item list-group-item-action">Municipio/Delegación: {detallesActuales.delegacion}</a>
 
-                                        {detallesActuales.imagen.startsWith("data") ? //verificando si tiene el prefijo o viene sin el
-                                            <img src={detallesActuales.imagen} className="img-fluid" />
-                                            :
-                                            <img src={"data:image/png;base64," + detallesActuales.imagen} className="img-fluid" />
+                                        {
+                                            detallesActuales.imagen ?//Verificando que si exista imagen
+                                                detallesActuales.imagen.startsWith("data") ? //verificando si tiene el prefijo o viene sin el
+                                                    <img src={detallesActuales.imagen} className="img-fluid" />
+                                                    :
+                                                    <img src={"data:image/png;base64," + detallesActuales.imagen} className="img-fluid" />
+                                                :
+                                                <label>Sin Imagen</label>
+                                        }
+                                    </div>
+                                    : null
+                            }
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/*<!-- Modal Edicion -->*/}
+
+            <div className="modal fade" id="EdicionModal" tabIndex="-1" role="dialog" aria-labelledby="EdicionModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content justify-content-center">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="DetallesModalLabel">Detalles</h5>
+                        </div>
+                        <div className="modal-body">
+                            {
+
+                                detallesActuales ?
+                                    <div className="list-group">
+                                        <a href="#" className="list-group-item list-group-item-action" >
+                                            Calle:{detallesActuales.calle} #: {detallesActuales.numero}
+                                        </a>
+                                        <a href="#" className="list-group-item list-group-item-action">Colonia: {detallesActuales.colonia} CP: {detallesActuales.cp}</a>
+                                        <a href="#" className="list-group-item list-group-item-action">Estado: {detallesActuales.estado}</a>
+                                        <a href="#" className="list-group-item list-group-item-action">Municipio/Delegación: {detallesActuales.delegacion}</a>
+
+                                        {
+                                            detallesActuales.imagen ?//Verificando que si exista imagen
+                                                detallesActuales.imagen.startsWith("data") ? //verificando si tiene el prefijo o viene sin el
+                                                    <img src={detallesActuales.imagen} className="img-fluid" />
+                                                    :
+                                                    <img src={"data:image/png;base64," + detallesActuales.imagen} className="img-fluid" />
+                                                :
+                                                <label>Sin Imagen</label>
                                         }
                                     </div>
                                     : null
