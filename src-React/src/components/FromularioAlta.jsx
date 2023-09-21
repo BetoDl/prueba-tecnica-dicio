@@ -148,12 +148,15 @@ export default function FromularioAlta({ datosIniciales, modo }) {
                 "imagen": selfie
             })
         }
+        let tipoPeticion = "POST";
         let url = "https://api.devdicio.net:8444/v1/sec_dev_interview/";
-        if (modo == "edicion") //cambio de URL en caso de edición
+        if (modo == "edicion") { //cambio de URL en caso de edición
             url = "https://api.devdicio.net:8444/v1/sec_dev_interview/" + id_usuario;
+            tipoPeticion = "PUT";
+        }
         axios({
             url: url,
-            method: "POST",
+            method: tipoPeticion,
             data: (datos),
             responseType: "text",
             contentType: "application/json",
