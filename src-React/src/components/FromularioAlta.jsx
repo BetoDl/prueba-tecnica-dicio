@@ -4,7 +4,7 @@ import { Modal } from 'bootstrap';
 import { useEffect, useRef } from 'react';
 import Fotografia from './Fotografia';
 import axios from "axios";
-//import { Modal } from 'bootstrap';
+
 /*
 Componente: Formulario Alta
 Descripción: Componente encargado de Capturar y dar de Alta los datos del Usuario
@@ -104,6 +104,80 @@ export default function FromularioAlta() {
         let cadenaProcesada = e.target.value.replace(reg, "");
         setCP(cadenaProcesada);
     }
+    //Función que envía los datos al servidor
+    function enviarDatos(e) {
+        e.preventDefault();
+        setEnviando(true); // Deshabilitando botones durante el envío
+        let datos = { //Armando datos para la petición
+            "nombre": nombre.trim(),
+            "apellidoPaterno": paterno.trim(),
+            "apellidoMaterno": materno.trim(),
+            "edad": edad,
+            "email": email.trim(),
+            "fechaNac": fecha,
+            "datos": JSON.stringify({ //Transformando en formato JSON Andidado
+                "calle": calle.trim(),
+                "numero": numero.trim(),
+                "colonia": colonia.trim(),
+                "delegacion": del_mun.trim(),
+                "estado": estado.trim(),
+                "cp": cp.trim(),
+                "imagen": selfie
+            })
+        }
+        const url = "https://api.devdicio.net:8444/v1/sec_dev_interview/";
+        axios({
+            url: url,
+            method: "POST",
+            data: (datos),
+            responseType: "text",
+            contentType: "application/json",
+            headers: {
+                "host": "api.devdicio.net",
+                "xc-token": "J38b4XQNLErVatKIh4oP1jw9e_wYWkS86Y04TMNP"
+            }
+        }).then((response) => {
+
+            try {
+                if (response.status == 200) {
+                    modalMensaje.current.show();
+                    setMensaje("Datos Guardados Correctamente");
+                    limpiar();
+                }
+                else {
+                    modalMensaje.current.show();
+                    setMensaje("Error");
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                modalMensaje.current.show();
+                setMensaje("Error");
+            }
+        }).catch((response) => {
+            console.error('Error:', response);
+            modalMensaje.current.show();
+            setMensaje("Error");
+        });
+    }
+    //Funcion encargada de limpiar el formulario
+    function limpiar() {
+        setNombre("");
+        setPaterno("");
+        setMaterno("");
+        setEdad("");
+        setEmail("");
+        setFecha("");
+        setCalle("");
+        setColonia("");
+        setNumero("");
+        setDel_mun("");
+        setNumero("");
+        setEstado("");
+        setCP("");
+        setCamara(false);
+        setSelfie(false);
+        setEnviando(false);
+    }
 
     return (
         <div className='FromularioAlta_general col-8'>
@@ -178,8 +252,8 @@ export default function FromularioAlta() {
                 <div className="modal-dialog" role="document">
                     <div className="modal-content justify-content-center">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="ModalMensajeLabel">Selfie</h5>
-                            <button type="button" className="close" data-bs-dismiss="modal" aria-label="Close" onClick={() => { setCamara(false); }}>
+                            <h5 className="modal-title" id="ModalMensajeLabel">Aviso</h5>
+                            <button type="button" className="close" data-bs-dismiss="modal" aria-label="Close" >
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -189,7 +263,7 @@ export default function FromularioAlta() {
                             </h1>
                         </div>
                         <div className="modal-footer">
-                            <button onClick={() => { setCamara(false); }} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
 
                         </div>
                     </div>
