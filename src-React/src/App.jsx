@@ -3,15 +3,16 @@ import "bootstrap";
 import BarraLateral from './components/BarraLateral';
 import "./theme/estilos.css";
 import FromularioAlta from './components/FromularioAlta';
+import VisualizarDatos from './components/VisualizarDatos';
 export function App() {
     const [pantalla, setPantalla] = useState('Altas');
     return (
-        <div className='row container '>
+        <div className='row w-100 '>
             <BarraLateral cambioPantalla={setPantalla} />
             {pantalla == "Altas" ?
                 <FromularioAlta />
                 : pantalla == "Visualizacion" ?
-                    null
+                    <VisualizarDatos />
                     : pantalla == "Edicion" ?
                         null
                         : null
