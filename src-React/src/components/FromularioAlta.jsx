@@ -7,7 +7,7 @@ import axios from "axios";
 
 /*
 Componente: Formulario Alta
-Descripción: Componente encargado de Capturar y dar de Alta los datos del Usuario
+Descripción: Componente encargado de Capturar y dar de Alta los datos del Usuario, este componenete tiene un modo de edición que recibe los datos del usuario a edtiar y el modo como "Edicion"
 */
 
 export default function FromularioAlta({ datosIniciales, modo }) {
