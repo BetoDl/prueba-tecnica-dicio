@@ -5,6 +5,7 @@
     "build": "npx parcel build src/index.html --dist-dir ../ --public-url / --no-cache --no-source-maps"
   },
   "devDependencies": {
+    "buffer": "^6.0.3",
     "parcel": "^2.9.3"
   },
   "dependencies": {
@@ -13,6 +14,7 @@
     "jquery": "^3.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-image-crop": "^10.1.8",
     "react-webcam": "^7.1.1"
   }
 }

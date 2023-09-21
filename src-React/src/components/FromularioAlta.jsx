@@ -3,6 +3,7 @@ import "bootstrap";
 import { Modal } from 'bootstrap';
 import { useEffect, useRef } from 'react';
 import Fotografia from './Fotografia';
+import axios from "axios";
 //import { Modal } from 'bootstrap';
 /*
 Componente: Formulario Alta
@@ -14,6 +15,7 @@ export default function FromularioAlta() {
     const [nombre, setNombre] = useState('');
     const [paterno, setPaterno] = useState('');
     const [materno, setMaterno] = useState('');
+    const [edad, setEdad] = useState(0);
     const [email, setEmail] = useState('');
     const [fecha, setFecha] = useState('');
     const [calle, setCalle] = useState('');
@@ -23,8 +25,12 @@ export default function FromularioAlta() {
     const [estado, setEstado] = useState('');
     const [cp, setCP] = useState('');
     const [camara, setCamara] = useState(false);
+    const [selfie, setSelfie] = useState(false);
+    const [enviando, setEnviando] = useState(false);
+    const [mensaje, setMensaje] = useState("");
     //variables de Ref
     const modalSelfie = useRef(false);
+    const modalMensaje = useRef(false);
     //Declaración de expresiones regulares para verificaciones
     const ReExpNombresNegado = "([^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ])+"; //Para eliminar Datos
     const ReExpNombres = "([a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ])+"; //En caso de que Falles se verifican directamente los datos en el Form
@@ -36,8 +42,16 @@ export default function FromularioAlta() {
     //Dar de alta los Modales equivalente Component Did mount
     useEffect(() => {
         modalSelfie.current = new Modal(document.getElementById('FotpgrafiaModal'));
+        modalMensaje.current = new Modal(document.getElementById('ModalMensaje'));
     },
         []);
+    //verifica que se ha terminado de tomar la fotografía.
+    useEffect(() => {
+        if (selfie) {
+            setCamara(false);
+        }
+    },
+        [selfie]);
 
     //Funciónes encargadas de almacenar y verificar las entradas
     function manejadorNombre(e) {
@@ -60,6 +74,8 @@ export default function FromularioAlta() {
         setEmail(cadenaProcesada);
     }
     function manejadorFecha(e) {
+        let edad = new Date().getFullYear() - parseInt(e.target.value.split("-")[0]);
+        setEdad(edad);
         setFecha(e.target.value);
     }
     function manejadorCalle(e) {
@@ -92,7 +108,7 @@ export default function FromularioAlta() {
     return (
         <div className='FromularioAlta_general col-8'>
             <div className='container'>
-                <form className='needs-validation'>
+                <form className='needs-validation' onSubmit={enviarDatos}>
                     <label className="form-label" htmlFor="nombre">Nombre: </label>
                     <div className="input-group input-group-sm mb-3">
                         <input onChange={manejadorNombre} value={nombre} type="text" id="nombre" className="form-control" placeholder="Nombre" required pattern={ReExpNombres} />
@@ -129,8 +145,8 @@ export default function FromularioAlta() {
                         <span className="input-group-text">CP</span>
                         <input onChange={manejadorCP} value={cp} type="number" className="form-control" placeholder="CP" pattern={ReExpNumeros} required />
                     </div>
-                    <button className='btn btn-primary m-2' type='button' onClick={() => { modalSelfie.current.show(); setCamara(true); }}> Tomar Selfie</button>
-                    <button className="btn btn-primary" type="submit">Dar de Alta</button>
+                    <button disabled={enviando} className='btn btn-primary m-2' type='button' onClick={() => { modalSelfie.current.show(); setCamara(true); }}> Tomar Selfie</button>
+                    <button disabled={enviando | !selfie} className="btn btn-success" type="submit">Dar de Alta</button>
                 </form>
             </div>
             {/*<!-- Modal Fotografía -->*/}
@@ -145,10 +161,32 @@ export default function FromularioAlta() {
                         </div>
                         <div className="modal-body">
                             {camara ?
-                                <Fotografia />
+                                <Fotografia regresarImagen={setSelfie} />
                                 :
                                 <label>Cargando</label>
                             }
+                        </div>
+                        <div className="modal-footer">
+                            <button onClick={() => { setCamara(false); }} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/*<!-- Modal Mensaje -->*/}
+            <div className="modal fade" id="ModalMensaje" tabIndex="-1" role="dialog" aria-labelledby="ModalMensajeLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content justify-content-center">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="ModalMensajeLabel">Selfie</h5>
+                            <button type="button" className="close" data-bs-dismiss="modal" aria-label="Close" onClick={() => { setCamara(false); }}>
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <h1>
+                                {mensaje}
+                            </h1>
                         </div>
                         <div className="modal-footer">
                             <button onClick={() => { setCamara(false); }} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
