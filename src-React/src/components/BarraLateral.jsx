@@ -31,9 +31,7 @@ export default function BarraLateral({ cambioPantalla }) {
                     <button type="button" id="barra_Visualizacion" className="list-group-item list-group-item-action"
                         onClick={(e) => { manejadorCambioPantalla("Visualizacion", e) }}
                     >Visualización</button>
-                    <button type="button" id="barra_Edicion" className="list-group-item list-group-item-action"
-                        onClick={(e) => { manejadorCambioPantalla("Edicion", e) }}
-                    >Edición</button>
+
                 </div>
             </div>
         </>

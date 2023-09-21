@@ -13,9 +13,7 @@ export function App() {
                 <FromularioAlta />
                 : pantalla == "Visualizacion" ?
                     <VisualizarDatos />
-                    : pantalla == "Edicion" ?
-                        null
-                        : null
+                    : null
             }
         </div>
     );
