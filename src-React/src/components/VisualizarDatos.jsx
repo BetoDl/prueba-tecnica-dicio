@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import "bootstrap";
 import axios from 'axios';
 import { Modal } from "bootstrap";
-import FromularioEdicion from './FromularioEdicion';
+import FromularioAlta from './FromularioAlta';
 /*
 Componente: VisualizarDatos
 
@@ -28,7 +28,6 @@ export default function VisualizarDatos() {
 
     //Hacemos la Petición de Usuarios inicial y las atualizaciones con las busquedas
     useEffect(() => {
-        console.log("activado")
         let offset = pagina * limite;
         let url = "https://api.devdicio.net:8444/v1/sec_dev_interview/?where=(nombre%2Clike%2C%25" + busquedaNombre.trim() + "%25)~and(apellidoPaterno%2Clike%2C%25" + busquedaPaterno.trim() + "%25)~and(apellidoMaterno%2Clike%2C%25" + busquedaMaterno.trim() + "%25)&limit=" + limite + "&offset=" + offset + "";
         axios({
@@ -106,7 +105,6 @@ export default function VisualizarDatos() {
     }
     //Abrimos modal para la edición de un usuario
     function abrirModalEdicion(info) {
-        console.log(info);
         setInformacionEdicion(info);
         modalEdicion.current.show();
     }
@@ -240,7 +238,7 @@ export default function VisualizarDatos() {
                         <div className="modal-body">
                             {
                                 informacionEdicion ?
-                                    <FromularioEdicion datosIniciales={informacionEdicion} />
+                                    <FromularioAlta datosIniciales={informacionEdicion} modo={"edicion"} />
                                     :
                                     null
                             }

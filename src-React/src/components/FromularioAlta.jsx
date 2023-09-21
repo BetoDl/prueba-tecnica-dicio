@@ -10,8 +10,9 @@ Componente: Formulario Alta
 Descripción: Componente encargado de Capturar y dar de Alta los datos del Usuario
 */
 
-export default function FromularioAlta() {
+export default function FromularioAlta({ datosIniciales, modo }) {
     //Declaración de States
+    const [id_usuario, setId_usuario] = useState('');
     const [nombre, setNombre] = useState('');
     const [paterno, setPaterno] = useState('');
     const [materno, setMaterno] = useState('');
@@ -39,6 +40,28 @@ export default function FromularioAlta() {
     const ReExpNumerosNegado = "([^0-9])+";
     const ReExpNumeros = "([0-9])+";
     const ReExpEmail = "(^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$)";
+    //inicializar variables de datos
+    useEffect(() => {
+        if (datosIniciales && modo == "edicion") {
+            setId_usuario(datosIniciales.id);
+            setNombre(datosIniciales.nombre);
+            setPaterno(datosIniciales.apellidoPaterno);
+            setMaterno(datosIniciales.apellidoMaterno);
+            setEdad(datosIniciales.edad);
+            setEmail(datosIniciales.email);
+            setFecha(datosIniciales.fechaNac);
+            if (datosIniciales.datos) {
+                setCalle(datosIniciales.datos.calle);
+                setNumero(datosIniciales.datos.numero);
+                setColonia(datosIniciales.datos.colonia);
+                setDel_mun(datosIniciales.datos.delegacion);
+                setEstado(datosIniciales.datos.estado);
+                setCP(datosIniciales.datos.cp);
+                setSelfie(datosIniciales.datos.imagen);
+            }
+        }
+    },
+        []);
     //Dar de alta los Modales equivalente Component Did mount
     useEffect(() => {
         modalSelfie.current = new Modal(document.getElementById('FotpgrafiaModal'));
@@ -125,7 +148,9 @@ export default function FromularioAlta() {
                 "imagen": selfie
             })
         }
-        const url = "https://api.devdicio.net:8444/v1/sec_dev_interview/";
+        let url = "https://api.devdicio.net:8444/v1/sec_dev_interview/";
+        if (modo == "edicion") //cambio de URL en caso de edición
+            url = "https://api.devdicio.net:8444/v1/sec_dev_interview/" + id_usuario;
         axios({
             url: url,
             method: "POST",
