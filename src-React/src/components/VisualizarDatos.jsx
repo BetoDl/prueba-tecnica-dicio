@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import "bootstrap";
 import axios from 'axios';
 import { Modal } from "bootstrap";
+import FromularioEdicion from './FromularioEdicion';
 /*
 Componente: VisualizarDatos
 
@@ -17,8 +18,11 @@ export default function VisualizarDatos() {
     const [pagina, setPagina] = useState(0);
     const [detallesActuales, setDetallesActuales] = useState(false);
 
+    const [informacionEdicion, setInformacionEdicion] = useState(false);
+
     const pagina_contador = useRef(0);
     const modalDetalles = useRef(false);
+    const modalEdicion = useRef(false);
 
     const limite = 10;
 
@@ -92,13 +96,19 @@ export default function VisualizarDatos() {
     //Inicializamos Modales
     useEffect(() => {
         modalDetalles.current = new Modal(document.getElementById('DetallesModal'));
+        modalEdicion.current = new Modal(document.getElementById('EdicionModal'));
     },
         []);
     //Abrimos los detalles de un usuario
     function abrirModalDetalles(info) {
-        console.log(info);
         setDetallesActuales(info);
         modalDetalles.current.show();
+    }
+    //Abrimos modal para la edición de un usuario
+    function abrirModalEdicion(info) {
+        console.log(info);
+        setInformacionEdicion(info);
+        modalEdicion.current.show();
     }
     //Funciones de Paginación
     function siguinetePagina() {
@@ -135,6 +145,7 @@ export default function VisualizarDatos() {
                 <td>{element.email}</td>
                 <td>{element.fechaNac}</td>
                 <td><a onClick={() => { abrirModalDetalles(element.datos) }} href='#'> Detalles</a></td>
+                <td><a onClick={() => { abrirModalEdicion(element) }} href='#'> Editar</a></td>
             </tr>
         );
     }
@@ -163,6 +174,7 @@ export default function VisualizarDatos() {
                             <th scope="col">Email</th>
                             <th scope="col">Fecha Nacimiento</th>
                             <th scope="col">Detalles</th>
+                            <th scope="col">Editar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -223,35 +235,18 @@ export default function VisualizarDatos() {
                 <div className="modal-dialog" role="document">
                     <div className="modal-content justify-content-center">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="DetallesModalLabel">Detalles</h5>
+                            <h5 className="modal-title" id="EdicionModalLabel">Edición</h5>
                         </div>
                         <div className="modal-body">
                             {
-
-                                detallesActuales ?
-                                    <div className="list-group">
-                                        <a href="#" className="list-group-item list-group-item-action" >
-                                            Calle:{detallesActuales.calle} #: {detallesActuales.numero}
-                                        </a>
-                                        <a href="#" className="list-group-item list-group-item-action">Colonia: {detallesActuales.colonia} CP: {detallesActuales.cp}</a>
-                                        <a href="#" className="list-group-item list-group-item-action">Estado: {detallesActuales.estado}</a>
-                                        <a href="#" className="list-group-item list-group-item-action">Municipio/Delegación: {detallesActuales.delegacion}</a>
-
-                                        {
-                                            detallesActuales.imagen ?//Verificando que si exista imagen
-                                                detallesActuales.imagen.startsWith("data") ? //verificando si tiene el prefijo o viene sin el
-                                                    <img src={detallesActuales.imagen} className="img-fluid" />
-                                                    :
-                                                    <img src={"data:image/png;base64," + detallesActuales.imagen} className="img-fluid" />
-                                                :
-                                                <label>Sin Imagen</label>
-                                        }
-                                    </div>
-                                    : null
+                                informacionEdicion ?
+                                    <FromularioEdicion datosIniciales={informacionEdicion} />
+                                    :
+                                    null
                             }
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => { setInformacionEdicion(false) }}>Cerrar</button>
                         </div>
                     </div>
                 </div>
