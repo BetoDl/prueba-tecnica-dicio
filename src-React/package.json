@@ -1,8 +1,8 @@
 {
   "scripts": {
     "server": "parcel src/index.html --no-hmr",
-    "watch": "npx parcel watch src/index.html --dist-dir ../ --public-url / --no-cache",
-    "build": "npx parcel build src/index.html --dist-dir ../ --public-url / --no-cache --no-source-maps"
+    "watch": "npx parcel watch src/index.html --dist-dir ../ --public-url ./ --no-cache",
+    "build": "npx parcel build src/index.html --dist-dir ../ --public-url ./ --no-cache --no-source-maps"
   },
   "devDependencies": {
     "buffer": "^6.0.3",
