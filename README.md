@@ -40,6 +40,8 @@ búsqueda por nombre.<br/>
 <b>3. OPCIONAL. Edición de datos. (1 punto).</b><br/>
  &emsp;&emsp;Una sección donde se pueda editar la información de los
 usuarios registrados. 
-<h2>Scripts de ejecución</h2>
-<li><b>npm run server</b> .- Ejecuta el proyecto en un servidor interno de parcel</li>
+<h2>Scripts de ejecución de proyecto</h2>
+<li><b>npm run server</b> .- Ejecuta el proyecto en un servidor interno de parcel local</li>
 <li><b>npm run build</b> .- Construye el proyecto para ejecutarlo desde un servidor externo (Se puede modificar la URL publica desde package.json )</li>
+<b>Nota:</b> Estos Scripts deben ser ejecutados desde la carpeta "src-react" <br/>
+De igual forma en la raiz del proyecto se encuentran los archivos para visualizar el proyecto desde el servidor local de su preferencia (Apache, server-live, etc.). No se podrán visualizar directamente sin un servidor local debido a la política CORS del navegador.
