@@ -33,10 +33,28 @@ export default function Fotografia({ regresarImagen }) {
         }
     },
         [finalizar]);
+    //mostrar dispositivos en consola
+    function handleDevices(mediaDevices) {
+        console.log("Dispositivos: ", mediaDevices);
+    }
+    useEffect(() => {
+        navigator.mediaDevices.enumerateDevices().then(handleDevices);
+    },
+        []);
     //Función que recupera la fotografia y la almacena
     function tomarFoto() {
         setImagen(webcamRef.current.getScreenshot());
     }
+    //Función para recuperar archivo
+    function obtenerArchivo(e) {
+        let archivo = e.target.files[0];
+        let reader = new FileReader();
+        reader.readAsDataURL(archivo);
+        reader.onload = () => {
+            setImagen(reader.result);
+        };
+    }
+
 
     return (
         <>
@@ -50,6 +68,10 @@ export default function Fotografia({ regresarImagen }) {
                         <button className='btn btn-success' type='button' onClick={tomarFoto}>
                             Tomar Foto
                         </button>
+                    </div>
+                    <div className='row m-2'>
+                        <label>Subir archivo: </label>
+                        <input type='file' id="archivo" accept='image/png' onChange={obtenerArchivo} />
                     </div>
                 </div>
                 :

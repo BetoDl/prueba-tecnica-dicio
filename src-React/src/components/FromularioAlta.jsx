@@ -99,7 +99,20 @@ export default function FromularioAlta({ datosIniciales, modo }) {
     function manejadorFecha(e) {
         let edad = new Date().getFullYear() - parseInt(e.target.value.split("-")[0]);
         setEdad(edad);
-        setFecha(e.target.value);
+        //validar fecha
+
+        if (parseInt(e.target.value.split("-")[0]) < new Date().getFullYear())
+            setFecha(e.target.value);
+        else if (parseInt(e.target.value.split("-")[0]) == new Date().getFullYear())
+            if (parseInt(e.target.value.split("-")[1]) < (new Date().getMonth() + 1))
+                setFecha(e.target.value);
+            else if (parseInt(e.target.value.split("-")[1]) == (new Date().getMonth() + 1)) {
+                if (parseInt(e.target.value.split("-")[2]) <= new Date().getDate())
+                    setFecha(e.target.value);
+                else
+                    alert("por favor seleccione una fecha valida");
+            }
+
     }
     function manejadorCalle(e) {
         let reg = new RegExp(ReExpCallesNegado);
